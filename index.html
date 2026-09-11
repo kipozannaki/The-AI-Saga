@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="《人工智能通俗演义》——从1943年的神经元模型到2026年的世界模型，一部写给所有人的人工智能发展史。">
+  <title>人工智能通俗演义 · The AI Saga</title>
+  <style>
+    :root {
+      --bg: #080b14;
+      --panel: #101726;
+      --text: #eef2ff;
+      --muted: #aeb8cf;
+      --line: rgba(255, 255, 255, .10);
+      --gold: #d8b06a;
+      --gold2: #f1d79a;
+      --blue: #79a9ff;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Noto Serif SC", "Songti SC", "STSong", serif;
+      background: radial-gradient(circle at 15% 10%, rgba(74, 111, 180, .18), transparent 30%),
+        radial-gradient(circle at 85% 20%, rgba(216, 176, 106, .10), transparent 28%),
+        linear-gradient(180deg, #070a12, #0a0f1c 45%, #070a12);
+      overflow-x: hidden
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none
+    }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 3px;
+      z-index: 1000;
+      background: linear-gradient(90deg, var(--blue), var(--gold));
+      box-shadow: 0 0 16px rgba(121, 169, 255, .65)
+    }
+
+    .nav {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 999;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+      background: rgba(7, 10, 18, .62);
+      backdrop-filter: blur(16px)
+    }
+
+    .nav-inner {
+      max-width: 1180px;
+      margin: auto;
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .brand {
+      font-size: 15px;
+      letter-spacing: .12em;
+      color: var(--gold2)
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+      color: var(--muted)
+    }
+
+    .nav-links a:hover {
+      color: var(--text)
+    }
+
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 22px 80px;
+      overflow: hidden
+    }
+
+    .hero:before {
+      content: "";
+      position: absolute;
+      inset: 10% 8% auto;
+      height: 58vh;
+      background:
+        linear-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .045) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, #000, transparent);
+      transform: perspective(700px) rotateX(58deg) scale(1.4);
+      opacity: .28
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 52vw;
+      height: 52vw;
+      max-width: 760px;
+      max-height: 760px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(121, 169, 255, .14), rgba(121, 169, 255, 0) 70%);
+      animation: pulse 8s ease-in-out infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(.95);
+        opacity: .65
+      }
+
+      50% {
+        transform: scale(1.06);
+        opacity: 1
+      }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 1040px;
+      text-align: center
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 14px;
+      border: 1px solid rgba(216, 176, 106, .24);
+      border-radius: 999px;
+      color: var(--gold2);
+      background: rgba(216, 176, 106, .06);
+      font: 12px/1 "Inter", "Noto Sans SC", sans-serif;
+      letter-spacing: .16em;
+      margin-bottom: 28px
+    }
+
+    .eyebrow:before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 12px var(--gold)
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(54px, 10vw, 112px);
+      line-height: .94;
+      letter-spacing: -.04em;
+      font-weight: 800
+    }
+
+    .subtitle {
+      margin: 22px auto 0;
+      max-width: 820px;
+      font: 300 clamp(18px, 2.4vw, 28px)/1.6 "Inter", "Noto Sans SC", sans-serif;
+      color: var(--muted)
+    }
+
+    .quote {
+      margin: 36px auto 0;
+      max-width: 760px;
+      color: var(--gold2);
+      font-size: 18px;
+      line-height: 1.9
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 34px;
+      flex-wrap: wrap
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 146px;
+      padding: 13px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      font: 14px "Inter", "Noto Sans SC", sans-serif;
+      transition: .25s
+    }
+
+    .btn-primary {
+      color: #111318;
+      background: linear-gradient(135deg, var(--gold2), var(--gold));
+      border-color: transparent
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, .04)
+    }
+
+    .btn:hover {
+      transform: translateY(-2px)
+    }
+
+    .stats {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 1px;
+      border: 1px solid var(--line);
+      background: var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, .38)
+    }
+
+    .stat {
+      background: rgba(10, 15, 27, .72);
+      padding: 24px 18px
+    }
+
+    .stat strong {
+      display: block;
+      font: 27px "Inter", "Noto Sans SC", sans-serif;
+      color: var(--gold2);
+      margin-bottom: 5px
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .section {
+      position: relative;
+      padding: 100px 22px
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: auto
+    }
+
+    .section-title {
+      margin-bottom: 46px
+    }
+
+    .section-kicker {
+      color: var(--gold);
+      font: 12px "Inter", "Noto Sans SC", sans-serif;
+      letter-spacing: .16em;
+      margin-bottom: 11px
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: clamp(32px, 5vw, 55px);
+      line-height: 1.15
+    }
+
+    .section-title p {
+      margin: 14px 0 0;
+      max-width: 740px;
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 16px
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 22px
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(17, 24, 40, .78), rgba(12, 17, 29, .72));
+      border-radius: 20px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, .38)
+    }
+
+    .about-copy {
+      padding: 34px
+    }
+
+    .about-copy p {
+      margin: 0 0 17px;
+      line-height: 2;
+      color: #d7deef
+    }
+
+    .principle {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center
+    }
+
+    .principle blockquote {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.7;
+      color: var(--gold2)
+    }
+
+    .principle small {
+      margin-top: 22px;
+      color: var(--muted);
+      line-height: 1.7
+    }
+
+    .timeline {
+      position: relative
+    }
+
+    .timeline:before {
+      content: "";
+      position: absolute;
+      left: 16px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(var(--gold), transparent);
+      opacity: .6
+    }
+
+    .event {
+      position: relative;
+      display: grid;
+      grid-template-columns: 74px 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+      align-items: start
+    }
+
+    .year {
+      position: relative;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 0 9px;
+      border: 1px solid rgba(216, 176, 106, .25);
+      background: #0a0f1b;
+      border-radius: 8px;
+      color: var(--gold2);
+      font: 12px "Inter", "Noto Sans SC", sans-serif
+    }
+
+    .event-card {
+      padding: 18px 20px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .025)
+    }
+
+    .event-card strong {
+      font-size: 16px
+    }
+
+    .event-card span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 13px
+    }
+
+    .manifesto {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px
+    }
+
+    .manifesto-item {
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-top-color: rgba(216, 176, 106, .36);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .025)
+    }
+
+    .manifesto-item h3 {
+      margin: 0 0 10px;
+      font-size: 19px
+    }
+
+    .manifesto-item p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.85;
+      font-size: 14px
+    }
+
+    .footer {
+      padding: 60px 22px 80px;
+      border-top: 1px solid var(--line);
+      background: rgba(0, 0, 0, .16)
+    }
+
+    .footer-inner {
+      max-width: 1180px;
+      margin: auto;
+      text-align: center
+    }
+
+    .footer-title {
+      font-size: 31px;
+      margin-bottom: 12px
+    }
+
+    .footer-quote {
+      max-width: 760px;
+      margin: auto;
+      color: var(--muted);
+      line-height: 1.9
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 18px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 28px;
+      color: var(--gold2);
+      font: 14px "Inter", "Noto Sans SC", sans-serif
+    }
+
+    .copyright {
+      margin-top: 34px;
+      color: #69748b;
+      font: 12px "Inter", "Noto Sans SC", sans-serif
+    }
+
+    @media(max-width:860px) {
+      .nav-links {
+        display: none
+      }
+
+      .about-grid,
+      .manifesto {
+        grid-template-columns: 1fr
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr)
+      }
+    }
+
+    @media(max-width:560px) {
+      .hero {
+        min-height: auto;
+        padding-top: 125px
+      }
+
+      .section {
+        padding: 78px 16px
+      }
+
+      .about-copy,
+      .principle {
+        padding: 24px
+      }
+
+      .event {
+        grid-template-columns: 58px 1fr;
+        gap: 12px
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .stat {
+        padding: 18px 10px
+      }
+
+      .stat strong {
+        font-size: 22px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="progress" id="progress"></div>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#top">THE AI SAGA</a>
+      <nav class="nav-links">
+        <a href="#book">本书</a><a href="#timeline">时间线</a><a href="#about">关于</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-glow"></div>
+      <div class="hero-content">
+        <div class="eyebrow">THE AI SAGA · OPEN SOURCE BOOK</div>
+        <h1>人工智能<br>通俗演义</h1>
+        <div class="subtitle">从 1943 年的神经元模型，到 2026 年的世界模型<br>一部写给所有人的人工智能发展史</div>
+        <div class="quote">“每一个公式背后都有一个人，每一个人背后都有一段故事。”</div>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="books/main-text.md">开始阅读</a>
+          <a class="btn btn-secondary" href="#timeline">查看时间线</a>
+          <a class="btn btn-secondary" href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+        </div>
+        <div class="stats">
+          <div class="stat"><strong>1943–2026</strong><span>八十三年人工智能史</span></div>
+          <div class="stat"><strong>14 回</strong><span>正文章回</span></div>
+          <div class="stat"><strong>6 次跃迁</strong><span>从计算到理解世界</span></div>
+          <div class="stat"><strong>∞</strong><span>仍未结束的故事</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="book">
+      <div class="container">
+        <div class="section-title">
+          <div class="section-kicker">THE BOOK</div>
+          <h2>不是一份技术名词表</h2>
+          <p>这本书试图做的，是把人工智能重新还原成一段人的历史：有天才，有争论，有失败，有寒冬，也有那些无人相信的时候依然没有离开的人。</p>
+        </div>
+        <div class="about-grid">
+          <div class="panel about-copy">
+            <p>从麦卡洛克与皮茨画出的第一张“人工神经元草图”，到图灵对“机器能思考吗”的追问；从感知机的狂欢与寒冬，到专家系统的兴衰；从卷积神经网络、反向传播、ImageNet、AlexNet，到 AlphaGo 与
+              Transformer；再从 GPT、ChatGPT 走向 Agent、推理模型、Skill、长程自主执行与世界模型。</p>
+            <p>你看到的不是一条平滑的技术进化曲线，而是一条充满曲折、误判、争论与坚持的路。今天看来理所当然的技术，在当年往往只是一篇没有多少人看懂的论文，或某个年轻人深夜里写下的一行代码。</p>
+            <p>这也是“通俗演义”三个字的意义：不降低历史的重量，只降低理解它的门槛。</p>
+          </div>
+          <div class="panel principle">
+            <blockquote>技术本身是冷的，<br>可做技术的人是热的。</blockquote><small>书写人工智能，不只是写模型与算法，也是在写那些曾经相信“这件事也许真的能做到”的人。</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="timeline">
+      <div class="container">
+        <div class="section-title">
+          <div class="section-kicker">TIMELINE</div>
+          <h2>从“会算”到“理解世界”</h2>
+          <p>把整部书压缩成一条时间线，你会看到：人工智能每一次跃迁，都在重新定义“智能”这个词。</p>
+        </div>
+        <div class="timeline">
+          <div class="event">
+            <div class="year">1943</div>
+            <div class="event-card"><strong>神经元模型</strong><span>人类第一次用数学画出大脑计算的抽象轮廓。</span></div>
+          </div>
+          <div class="event">
+            <div class="year">1950</div>
+            <div class="event-card"><strong>图灵测试</strong><span>“机器能思考吗？”第一次被转化成可讨论的问题。</span></div>
+          </div>
+          <div class="event">
+            <div class="year">1956</div>
+            <div class="event-card"><strong>达特茅斯会议</strong><span>“人工智能”作为正式学科名称登上历史舞台。</span></div>
+          </div>
+          <div class="event">
+            <div class="year">2012</div>
+            <div class="event-card"><strong>AlexNet</strong><span>大规模数据、GPU 与深度神经网络汇合。</span></div>
+          </div>
+          <div class="event">
+            <div class="year">2016</div>
+            <div class="event-card"><strong>AlphaGo</strong><span>机器击败顶尖围棋棋手，AI 第一次真正“出圈”。</span></div>
+          </div>
+          <div class="event">
+            <div class="year">2017</div>
+            <div class="event-card"><strong>Transformer</strong><span>Attention 重塑机器处理语言与信息的方式。</span></div>
+          </div>
+          <div class="event">
+            <div class="year">2022</div>
+            <div class="event-card"><strong>ChatGPT</strong><span>人工智能第一次真正走进亿万普通用户的日常生活。</span></div>
+          </div>
+          <div class="event">
+            <div class="year">2024–2025</div>
+            <div class="event-card"><strong>推理模型</strong><span>AI 开始从“立即回答”转向“花时间思考”。</span></div>
+          </div>
+          <div class="event">
+            <div class="year">2026</div>
+            <div class="event-card"><strong>长程 Agent 与世界模型</strong><span>AI 开始从数字世界走向真实世界，从一次性响应走向持续行动。</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="container">
+        <div class="section-title">
+          <div class="section-kicker">WHY THIS PROJECT</div>
+          <h2>这本书为什么开源？</h2>
+          <p>因为人工智能本身就是一场持续八十余年的知识接力。既然故事仍在继续，这本书也不应该被封存在一个静态文件里。</p>
+        </div>
+        <div class="manifesto">
+          <div class="manifesto-item">
+            <h3>开放阅读</h3>
+            <p>让没有技术背景的人也能以较低门槛理解人工智能从哪里来、为什么这样发展。</p>
+          </div>
+          <div class="manifesto-item">
+            <h3>持续修订</h3>
+            <p>历史事实、人物经历与前沿技术都可以被校正、补充和更新，版本随时间继续生长。</p>
+          </div>
+          <div class="manifesto-item">
+            <h3>知识接力</h3>
+            <p>希望它最终不只是一部书，而成为一个可以继续扩展的 AI 历史开放资料库。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="panel" style="padding:48px 34px;text-align:center">
+          <div class="section-kicker">FINAL QUESTION</div>
+          <h2 style="margin:0;font-size:clamp(34px,6vw,66px)">机器到底有没有智能？</h2>
+          <p style="max-width:720px;margin:20px auto 0;color:var(--muted);line-height:2">1943 年，人类开始问机器能不能计算；1950
+            年，开始问机器能不能思考；2026 年，我们开始问机器能不能自主行动、能不能理解世界。也许真正重要的问题，从来不只是机器变成了什么，而是我们借着机器重新看见了怎样的人类自己。</p>
+          <div class="quote">“火种仍在燃烧。故事仍在继续。”</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-title">人工智能通俗演义</div>
+      <p class="footer-quote">八十三年的路，每一步都写满了人的执着与挣扎。</p>
+      <div class="footer-links"><a href="#book">关于本书</a><a href="#timeline">AI 时间线</a><a
+          href="#top">回到顶部 ↑</a></div>
+      <div class="copyright">The AI Saga · Open Source Book · 1943–2026</div>
+    </div>
+  </footer>
+
+  <script>
+    const progress = document.getElementById("progress");
+    function updateProgress() {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.width = (h > 0 ? Math.min(100, Math.max(0, window.scrollY / h * 100)) : 0) + "%";
+    }
+    window.addEventListener("scroll", updateProgress, {passive: true}); updateProgress();
+  </script>
+</body>
+
+</html>
